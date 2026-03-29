@@ -12,7 +12,7 @@ from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error
 import matplotlib
-matplotlib.use('Agg') # 🚀 重要：強制使用非互動式後端，防止雲端噴錯
+matplotlib.use('Agg') # 重要：強制使用非互動式後端，防止雲端噴錯
 import matplotlib.pyplot as plt
 
 # 1. 初始化 BigQuery 客戶端 (會自動讀取你的 ADC 憑證)
@@ -36,7 +36,7 @@ if USE_CACHE and os.path.exists(CACHE_FILE):
     print("📦 正在從本地快取讀取數據 (跳過 BigQuery)...")
     df = pd.read_parquet(CACHE_FILE)
 else:
-    print("🚀 正在從 BigQuery 下載 1,000,000 筆清洗後的數據...")
+    print("正在從 BigQuery 下載 1,000,000 筆清洗後的數據...")
     # 2. 從 dbt 產出的「乾淨表」撈取資料 (限制 100 萬筆以確保筆電執行流暢)
     query = """
     SELECT 
@@ -51,7 +51,7 @@ else:
     df = client.query(query).to_dataframe()
     if not IS_CLOUD:
         df.to_parquet(CACHE_FILE)
-    print(f"💾 已儲存快取至 {CACHE_FILE}")
+    print(f"已儲存快取至 {CACHE_FILE}")
 
 # 3. 特徵工程：將類別變數轉為數值 (One-Hot Encoding)
 # 這是處理「超市名稱」和「類別名稱」標準做法
@@ -94,7 +94,7 @@ plt.xlabel('Actual Price (£)')
 plt.ylabel('Predicted Price (£)')
 plt.title('HMM Retail Price Prediction: Actual vs Predicted')
 plt.savefig('prediction_results.png')
-plt.close() # 🚀 養成好習慣：關閉圖表釋放記憶體
+plt.close() # 養成好習慣：關閉圖表釋放記憶體
 print("📸 預測結果圖已儲存為 prediction_results.png")
 
 # 初始化 Vertex AI 實驗環境
@@ -140,14 +140,6 @@ with mlflow.start_run(run_name="XGBoost_Baseline_v1"):
             "max_depth": 6,
             "learning_rate": 0.1
         })
-    
-    # 這是分類模型才會用的寫法（你不適用，但供參考）
-    #aiplatform.log_classification_metrics(
-    #    labels=['Low Price', 'High Price'],
-    #    matrix=[[45, 5], [10, 40]],  # 預測對錯的次數
-    #    display_name="my-confusion-matrix"
-    #)
-    # 如果要上傳圖片，通常是透過 log_model 或手動傳到 GCS 關聯
         
     print("✅ 實驗數據已同步至 MLflow 與 Vertex AI Experiments！")
 
