@@ -16,7 +16,7 @@ matplotlib.use('Agg') # 🚀 重要：強制使用非互動式後端，防止雲
 import matplotlib.pyplot as plt
 
 # 1. 初始化 BigQuery 客戶端 (會自動讀取你的 ADC 憑證)
-client = bigquery.Client(location="europe-west2")
+client = bigquery.Client(project="ml-time-series", location="europe-west2")
 
 
 # 設定檔案路徑
