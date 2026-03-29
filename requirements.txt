@@ -1,0 +1,11 @@
+pandas
+numpy
+google-cloud-bigquery
+google-cloud-aiplatform
+xgboost
+scikit-learn
+mlflow
+pyarrow
+db-dtypes
+matplotlib
+dbt-bigquery

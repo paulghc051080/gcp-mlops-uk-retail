@@ -1,0 +1,10 @@
+__pycache__/
+mlruns/
+logs/
+target/
+dbt_packages/
+*.parquet
+*.bst
+*.png
+.env
+auth.json
