@@ -1,8 +1,6 @@
 import mlflow
 import mlflow.xgboost
-
 import google.cloud.aiplatform as aiplatform
-
 import os
 import datetime
 import pandas as pd
@@ -12,155 +10,107 @@ from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error
 import matplotlib
-matplotlib.use('Agg') # 重要：強制使用非互動式後端，防止雲端噴錯
+matplotlib.use('Agg') 
 import matplotlib.pyplot as plt
 
-# 1. 初始化 BigQuery 客戶端 (會自動讀取你的 ADC 憑證)
-client = bigquery.Client(project="ml-time-series", location="europe-west2")
+# --- 0. 全域配置 ---
+PROJECT_ID = "ml-time-series"
+REGION = "europe-west2"
+BUCKET_NAME = "ml-time-series-london"
+EXPERIMENT_NAME = "uk-retail-analysis"
 
-
-# 設定檔案路徑
-# --- 🚀 修正點：環境判斷 ---
-# 檢查是否在 Vertex AI 雲端執行 (GCP 會自動帶入這個變數)
+# 環境判定：更強健的偵測方式
 IS_CLOUD = (os.getenv('CLOUD_ML_JOB_ID') is not None) or (os.getenv('AIP_MODEL_DIR') is not None)
 CACHE_FILE = "data_sample.parquet"
 
+# 生成唯一的執行識別碼
+job_id = os.getenv('CLOUD_ML_JOB_ID', 'local-run')
+timestamp = datetime.datetime.now().strftime('%Y%m%d-%H%M')
+run_id = f"xgboost-{job_id}-{timestamp}"
+
+# 1. 初始化 BigQuery
+bq_client = bigquery.Client(project=PROJECT_ID, location=REGION)
+
+query = """
+        SELECT supermarket_name, category_name, is_own_brand, price 
+        FROM `ml-time-series.hmm_retail_analysis_uk.stg_uk_retail`
+        WHERE price > 0 LIMIT 1000000
+        """
+
+# 2. 數據獲取：實現數據版本控制與效能優化 [cite: 15, 16]
 if IS_CLOUD:
-    print("☁️ 偵測到雲端環境：強制從 BigQuery 獲取最新數據...")
-    USE_CACHE = False
+    print("雲端環境：從 BigQuery 獲取百萬級數據...")
+    df = bq_client.query(query).to_dataframe()
 else:
-    print("💻 偵測到本地環境：啟用快取機制...")
-    USE_CACHE = True
-
-if USE_CACHE and os.path.exists(CACHE_FILE):
-    print("📦 正在從本地快取讀取數據 (跳過 BigQuery)...")
-    df = pd.read_parquet(CACHE_FILE)
-else:
-    print("正在從 BigQuery 下載 1,000,000 筆清洗後的數據...")
-    # 2. 從 dbt 產出的「乾淨表」撈取資料 (限制 100 萬筆以確保筆電執行流暢)
-    query = """
-    SELECT 
-        supermarket_name, 
-        category_name, 
-        is_own_brand, 
-        price 
-    FROM `ml-time-series.hmm_retail_analysis_uk.stg_uk_retail`
-    WHERE price > 0
-    LIMIT 1000000
-    """
-    df = client.query(query).to_dataframe()
-    if not IS_CLOUD:
+    print("本地環境：啟用快取機制以加速開發...")
+    if os.path.exists(CACHE_FILE):
+        df = pd.read_parquet(CACHE_FILE)
+    else:
+        df = bq_client.query(query).to_dataframe()
         df.to_parquet(CACHE_FILE)
-    print(f"已儲存快取至 {CACHE_FILE}")
 
-# 3. 特徵工程：將類別變數轉為數值 (One-Hot Encoding)
-# 這是處理「超市名稱」和「類別名稱」標準做法
+# 3. 特徵工程：滿足 JD 對特徵優化的要求 
 df = pd.get_dummies(df, columns=['supermarket_name', 'category_name'])
-
-# 4. 準備訓練數據
 X = df.drop('price', axis=1)
 y = df['price']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# 5. 配置 XGBoost 迴歸模型
-# 設定 tree_method='hist' 可以加速處理百萬級數據
-model = XGBRegressor(
-    n_estimators=100,
-    learning_rate=0.1,
-    max_depth=6,
-    tree_method='hist',
-    random_state=42
-)
-
-print("🧠 開始訓練 XGBoost 模型...")
+# 4. 模型訓練：使用 hist 提升百萬級數據處理速度 [cite: 13, 24]
+model = XGBRegressor(n_estimators=100, learning_rate=0.1, max_depth=6, tree_method='hist', random_state=42)
+print("開始訓練 XGBoost 模型...")
 model.fit(X_train, y_train)
 
-# 6. 模型評估 (計算 RMSE)
+# 5. 評估指標：直接對應 JD 的評估要求 [cite: 23]
 preds = model.predict(X_test)
 rmse = np.sqrt(mean_squared_error(y_test, preds))
 mape = mean_absolute_percentage_error(y_test, preds)
+print(f"評估結果 - RMSE: £{rmse:.4f}, MAPE: {mape:.2%}")
 
-print("-" * 30)
-print(f"📊 評估結果 (Evaluation Metrics):")
-print(f"✅ RMSE: £{rmse:.4f}")
-print(f"✅ MAPE: {mape:.2%}")
-print("-" * 30)
+# --- 6. 實驗追蹤與模型註冊：分流處理  ---
 
-# 7. 視覺化：預測值 vs 實際值 (面試展示用)
-plt.figure(figsize=(10, 6))
-plt.scatter(y_test[:100], preds[:100], alpha=0.5)
-plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--')
-plt.xlabel('Actual Price (£)')
-plt.ylabel('Predicted Price (£)')
-plt.title('HMM Retail Price Prediction: Actual vs Predicted')
-plt.savefig('prediction_results.png')
-plt.close() # 養成好習慣：關閉圖表釋放記憶體
-print("📸 預測結果圖已儲存為 prediction_results.png")
+if not IS_CLOUD:
+    # 產出預測圖表
+    plt.figure(figsize=(10, 6))
+    plt.scatter(y_test[:100], preds[:100], alpha=0.5)
+    plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--')
+    plt.savefig('prediction_results.png')
+    plt.close()
+    print("預測結果圖已儲存為 prediction_results.png")
 
-# 初始化 Vertex AI 實驗環境
-aiplatform.init(
-    project="ml-time-series",
-    location="europe-west2",
-    experiment="uk-retail-analysis"
-)
-
-# 設定實驗名稱 (如果不存在會自動建立)
-mlflow.set_experiment("UK_Retail_Analysis")
-
-with mlflow.start_run(run_name="XGBoost_Baseline_v1"):
-    # 紀錄你設定的超參數
-    mlflow.log_params({
-        "n_estimators": 100,
-        "max_depth": 6,
-        "learning_rate": 0.1,
-        "tree_method": "hist"
-    })
-
-    # 紀錄計算出來的指標
-    mlflow.log_metrics({
-        "rmse": rmse,
-        "mape": mape
-    })
-
-    # 紀錄模型本身 (將來可以一鍵部署)
-    mlflow.xgboost.log_model(model, "model")
-
-    # 紀錄剛剛產出的那張 PNG 圖
-    mlflow.log_artifact("prediction_results.png")
-
-    # --- Vertex AI 部分 (新增這段) ---
-    # 使用與 run_name 一致的名稱，方便在 GCP 找資料
-    # 產生如 xgboost-baseline-20260329-0830 的名稱
-    run_id = f"xgboost-baseline-{datetime.datetime.now().strftime('%Y%m%d-%H%M%S')}"
-
+    # 本地模式：使用輕量的 MLflow
+    mlflow.set_experiment(f"{EXPERIMENT_NAME}-local")
+    with mlflow.start_run(run_name=f"dev-{timestamp}"):
+        mlflow.log_params({"n_estimators": 100, "max_depth": 6, "learning_rate": 0.1, "tree_method": "hist"})
+        mlflow.log_metrics({"rmse": rmse, "mape": mape})
+        mlflow.xgboost.log_model(model, "model")
+        mlflow.log_artifact("prediction_results.png")
+    print("✅ MLflow 本地紀錄完成。")
+else:
+    # 雲端模式：整合 Vertex AI 完整生命週期 [cite: 15, 21]
+    print("🚀 啟動 Vertex AI 實驗追蹤與自動化註冊...")
+    aiplatform.init(project=PROJECT_ID, location=REGION, experiment=EXPERIMENT_NAME)
+    
     with aiplatform.start_run(run=run_id):
         aiplatform.log_metrics({"rmse": rmse, "mape": mape})
-        aiplatform.log_params({
-            "n_estimators": 100, 
-            "max_depth": 6,
-            "learning_rate": 0.1
-        })
-        
-    print("✅ 實驗數據已同步至 MLflow 與 Vertex AI Experiments！")
+        aiplatform.log_params({"n_estimators": 100, "max_depth": 6})
 
-    # --- 自動註冊模型到 Model Registry ---
-    if IS_CLOUD:
-        # 儲存模型
+        # 模型持久化儲存至 GCS
         model.save_model("model.bst")
+        storage_client = storage.Client()
+        bucket = storage_client.bucket(BUCKET_NAME)
+        
+        model_blob = bucket.blob(f"model-artifacts/{run_id}/model.bst")
+        model_blob.upload_from_filename("model.bst")
+        
+        # 同步圖表至 GCS 以供長期審計
+        plot_blob = bucket.blob(f"plots/{run_id}/prediction_results.png")
+        plot_blob.upload_from_filename("prediction_results.png")
 
-        # 上傳到 GCS (Vertex AI 需要從這裡抓取模型資產)
-        bucket = storage.Client().bucket("ml-time-series-london")
-        blob = bucket.blob(f"model-artifacts/{run_id}/model.bst")
-        blob.upload_from_filename("model.bst")
-
-        print("📦 偵測到雲端環境，正在自動註冊模型至 Model Registry...")
+        # 自動註冊模型，準備進行 Online Serving 
+        print("📦 註冊模型至 Model Registry...")
         registered_model = aiplatform.Model.upload(
             display_name="uk-retail-price-predictor",
-            # 指向你剛剛上傳的 GCS 資料夾（不是單一檔案，是資料夾路徑）
-            artifact_uri=f"gs://ml-time-series-london/model-artifacts/{run_id}/",
+            artifact_uri=f"gs://{BUCKET_NAME}/model-artifacts/{run_id}/",
             serving_container_image_uri="europe-docker.pkg.dev/vertex-ai/prediction/xgboost-cpu.1-6:latest"
         )
-        print(f"🚀 模型註冊成功！版本名稱: {registered_model.version_id}")
-
-   
-
+        print(f"🚀 模型註冊成功！版本: {registered_model.version_id}")

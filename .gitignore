@@ -10,3 +10,4 @@ dbt_packages/
 *.png
 .env
 auth.json
+train_xgboost_1.py
