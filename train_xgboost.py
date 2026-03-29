@@ -66,17 +66,17 @@ rmse = np.sqrt(mean_squared_error(y_test, preds))
 mape = mean_absolute_percentage_error(y_test, preds)
 print(f"評估結果 - RMSE: £{rmse:.4f}, MAPE: {mape:.2%}")
 
+#6. 產出預測圖表
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test[:100], preds[:100], alpha=0.5)
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--')
+plt.savefig('prediction_results.png')
+plt.close()
+print("預測結果圖已儲存為 prediction_results.png")
+
 # --- 6. 實驗追蹤與模型註冊：分流處理  ---
 
 if not IS_CLOUD:
-    # 產出預測圖表
-    plt.figure(figsize=(10, 6))
-    plt.scatter(y_test[:100], preds[:100], alpha=0.5)
-    plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--')
-    plt.savefig('prediction_results.png')
-    plt.close()
-    print("預測結果圖已儲存為 prediction_results.png")
-
     # 本地模式：使用輕量的 MLflow
     mlflow.set_experiment(f"{EXPERIMENT_NAME}-local")
     with mlflow.start_run(run_name=f"dev-{timestamp}"):
@@ -109,7 +109,7 @@ else:
         # 自動註冊模型，準備進行 Online Serving 
         print("📦 註冊模型至 Model Registry...")
         registered_model = aiplatform.Model.upload(
-            display_name="uk-retail-price-predictor",
+            display_name=f"uk-retail-price-predictor{run_id}",
             artifact_uri=f"gs://{BUCKET_NAME}/model-artifacts/{run_id}/",
             serving_container_image_uri="europe-docker.pkg.dev/vertex-ai/prediction/xgboost-cpu.1-6:latest"
         )
