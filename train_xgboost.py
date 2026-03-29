@@ -7,7 +7,7 @@ import os
 import datetime
 import pandas as pd
 import numpy as np
-from google.cloud import bigquery
+from google.cloud import bigquery, storage
 from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error
@@ -150,5 +150,25 @@ with mlflow.start_run(run_name="XGBoost_Baseline_v1"):
     # 如果要上傳圖片，通常是透過 log_model 或手動傳到 GCS 關聯
         
     print("✅ 實驗數據已同步至 MLflow 與 Vertex AI Experiments！")
-    #test cloud build
+
+    # --- 自動註冊模型到 Model Registry ---
+    if IS_CLOUD:
+        # 儲存模型
+        model.save_model("model.bst")
+
+        # 上傳到 GCS (Vertex AI 需要從這裡抓取模型資產)
+        bucket = storage.Client().bucket("ml-time-series-london")
+        blob = bucket.blob(f"model-artifacts/{run_id}/model.bst")
+        blob.upload_from_filename("model.bst")
+        
+        print("📦 偵測到雲端環境，正在自動註冊模型至 Model Registry...")
+        registered_model = aiplatform.Model.upload(
+            display_name="uk-retail-price-predictor",
+            # 指向你剛剛上傳的 GCS 資料夾（不是單一檔案，是資料夾路徑）
+            artifact_uri=f"gs://ml-time-series-london/model-artifacts/{run_id}/",
+            serving_container_image_uri="europe-docker.pkg.dev/vertex-ai/prediction/xgboost-cpu.1-6:latest"
+        )
+        print(f"🚀 模型註冊成功！版本名稱: {registered_model.version_id}")
+
+   
 

@@ -38,6 +38,7 @@ steps:
       - "--worker-pool-spec=machine-type=n1-standard-4,container-image-uri=europe-west2-docker.pkg.dev/$PROJECT_ID/uk-retail-repo/trainer:latest"
       - "--command=python,train_xgboost.py"
       - "--args=--input-table=ml-time-series.hmm_retail_analysis_uk.stg_uk_retail"
+      - "--service-account=service-1076021319818@gcp-sa-aiplatform.iam.gserviceaccount.com"
 
 images:
   - "europe-west2-docker.pkg.dev/$PROJECT_ID/uk-retail-repo/trainer:latest"
