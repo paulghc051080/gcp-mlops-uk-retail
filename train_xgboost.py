@@ -138,4 +138,5 @@ with mlflow.start_run(run_name="XGBoost_Baseline_v1"):
     # 如果要上傳圖片，通常是透過 log_model 或手動傳到 GCS 關聯
         
     print("✅ 實驗數據已同步至 MLflow 與 Vertex AI Experiments！")
+    #test cloud build
 
