@@ -11,35 +11,46 @@ from google.cloud import bigquery
 from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error
+import matplotlib
+matplotlib.use('Agg') # 🚀 重要：強制使用非互動式後端，防止雲端噴錯
 import matplotlib.pyplot as plt
 
 # 1. 初始化 BigQuery 客戶端 (會自動讀取你的 ADC 憑證)
 client = bigquery.Client(location="europe-west2")
 
-# 2. 從 dbt 產出的「乾淨表」撈取資料 (限制 100 萬筆以確保筆電執行流暢)
-query = """
-SELECT 
-    supermarket_name, 
-    category_name, 
-    is_own_brand, 
-    price 
-FROM `ml-time-series.hmm_retail_analysis_uk.stg_uk_retail`
-WHERE price > 0
-LIMIT 1000000
-"""
+
 # 設定檔案路徑
+# --- 🚀 修正點：環境判斷 ---
+# 檢查是否在 Vertex AI 雲端執行 (GCP 會自動帶入這個變數)
+IS_CLOUD = os.getenv('AIP_MODEL_DIR') is not None
 CACHE_FILE = "data_sample.parquet"
-USE_CACHE = True  # 測試時設為 True，跑正式流程時設為 False
+
+if IS_CLOUD:
+    print("☁️ 偵測到雲端環境：強制從 BigQuery 獲取最新數據...")
+    USE_CACHE = False
+else:
+    print("💻 偵測到本地環境：啟用快取機制...")
+    USE_CACHE = True
 
 if USE_CACHE and os.path.exists(CACHE_FILE):
     print("📦 正在從本地快取讀取數據 (跳過 BigQuery)...")
     df = pd.read_parquet(CACHE_FILE)
 else:
     print("🚀 正在從 BigQuery 下載 1,000,000 筆清洗後的數據...")
+    # 2. 從 dbt 產出的「乾淨表」撈取資料 (限制 100 萬筆以確保筆電執行流暢)
+    query = """
+    SELECT 
+        supermarket_name, 
+        category_name, 
+        is_own_brand, 
+        price 
+    FROM `ml-time-series.hmm_retail_analysis_uk.stg_uk_retail`
+    WHERE price > 0
+    LIMIT 1000000
+    """
     df = client.query(query).to_dataframe()
-
-    # 第一次下載後存起來，下次就快了
-    df.to_parquet(CACHE_FILE)
+    if not IS_CLOUD:
+        df.to_parquet(CACHE_FILE)
     print(f"💾 已儲存快取至 {CACHE_FILE}")
 
 # 3. 特徵工程：將類別變數轉為數值 (One-Hot Encoding)
@@ -83,6 +94,7 @@ plt.xlabel('Actual Price (£)')
 plt.ylabel('Predicted Price (£)')
 plt.title('HMM Retail Price Prediction: Actual vs Predicted')
 plt.savefig('prediction_results.png')
+plt.close() # 🚀 養成好習慣：關閉圖表釋放記憶體
 print("📸 預測結果圖已儲存為 prediction_results.png")
 
 # 初始化 Vertex AI 實驗環境
