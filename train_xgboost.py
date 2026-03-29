@@ -22,7 +22,7 @@ client = bigquery.Client(project="ml-time-series", location="europe-west2")
 # 設定檔案路徑
 # --- 🚀 修正點：環境判斷 ---
 # 檢查是否在 Vertex AI 雲端執行 (GCP 會自動帶入這個變數)
-IS_CLOUD = os.getenv('AIP_MODEL_DIR') is not None
+IS_CLOUD = (os.getenv('CLOUD_ML_JOB_ID') is not None) or (os.getenv('AIP_MODEL_DIR') is not None)
 CACHE_FILE = "data_sample.parquet"
 
 if IS_CLOUD:
@@ -160,7 +160,7 @@ with mlflow.start_run(run_name="XGBoost_Baseline_v1"):
         bucket = storage.Client().bucket("ml-time-series-london")
         blob = bucket.blob(f"model-artifacts/{run_id}/model.bst")
         blob.upload_from_filename("model.bst")
-        
+
         print("📦 偵測到雲端環境，正在自動註冊模型至 Model Registry...")
         registered_model = aiplatform.Model.upload(
             display_name="uk-retail-price-predictor",
