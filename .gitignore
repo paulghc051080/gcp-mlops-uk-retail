@@ -1,8 +1,10 @@
 __pycache__/
+mlflow.db
 mlruns/
-logs/
-target/
-dbt_packages/
+mlflow/
+uk_retail_dbt/target/
+uk_retail_dbt/dbt_packages/
+uk_retail_dbt/logs/
 *.parquet
 *.bst
 *.png

@@ -1,0 +1,155 @@
+[0m14:18:23.446615 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1102b8b50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1121d8460>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1121d8550>]}
+
+
+============================== 14:18:23.449856 | 92afd113-5898-4869-804a-9ab05fdf3ce2 ==============================
+[0m14:18:23.449856 [info ] [MainThread]: Running with dbt=1.11.7
+[0m14:18:23.450263 [debug] [MainThread]: running dbt with arguments {'fail_fast': 'False', 'invocation_command': 'dbt init uk_retail_dbt', 'static_parser': 'True', 'printer_width': '80', 'indirect_selection': 'eager', 'write_json': 'True', 'empty': 'None', 'use_experimental_parser': 'False', 'quiet': 'False', 'warn_error': 'None', 'send_anonymous_usage_stats': 'True', 'no_print': 'None', 'log_path': 'logs', 'partial_parse': 'True', 'log_format': 'default', 'use_colors': 'True', 'introspect': 'True', 'profiles_dir': '/Users/paul/.dbt', 'target_path': 'None', 'log_cache_events': 'False', 'cache_selected_only': 'False', 'version_check': 'True', 'debug': 'False', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])'}
+[0m14:18:23.459536 [info ] [MainThread]: Creating dbt configuration folder at /Users/paul/.dbt
+[0m14:18:23.460995 [debug] [MainThread]: Starter project path: /opt/homebrew/Caskroom/miniforge/base/envs/hmm_ml_env/lib/python3.10/site-packages/dbt/include/starter_project
+[0m14:18:23.465840 [info ] [MainThread]: 
+Your new dbt project "uk_retail_dbt" was created!
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m14:18:23.466310 [info ] [MainThread]: Setting up your profile.
+[0m15:07:57.263644 [error] [MainThread]: Encountered an error:
+
+[0m15:07:57.273819 [error] [MainThread]: Traceback (most recent call last):
+  File "/opt/homebrew/Caskroom/miniforge/base/envs/hmm_ml_env/lib/python3.10/site-packages/dbt/cli/requires.py", line 182, in wrapper
+    result, success = func(*args, **kwargs)
+  File "/opt/homebrew/Caskroom/miniforge/base/envs/hmm_ml_env/lib/python3.10/site-packages/dbt/cli/requires.py", line 128, in wrapper
+    return func(*args, **kwargs)
+  File "/opt/homebrew/Caskroom/miniforge/base/envs/hmm_ml_env/lib/python3.10/site-packages/dbt/cli/main.py", line 483, in init
+    results = task.run()
+  File "/opt/homebrew/Caskroom/miniforge/base/envs/hmm_ml_env/lib/python3.10/site-packages/dbt/task/init.py", line 346, in run
+    self.setup_profile(profile_name)
+  File "/opt/homebrew/Caskroom/miniforge/base/envs/hmm_ml_env/lib/python3.10/site-packages/dbt/task/init.py", line 261, in setup_profile
+    adapter = self.ask_for_adapter_choice()
+  File "/opt/homebrew/Caskroom/miniforge/base/envs/hmm_ml_env/lib/python3.10/site-packages/dbt/task/init.py", line 242, in ask_for_adapter_choice
+    numeric_choice = click.prompt(prompt_msg, type=click.INT)
+  File "/opt/homebrew/Caskroom/miniforge/base/envs/hmm_ml_env/lib/python3.10/site-packages/click/termui.py", line 171, in prompt
+    value = prompt_func(prompt)
+  File "/opt/homebrew/Caskroom/miniforge/base/envs/hmm_ml_env/lib/python3.10/site-packages/click/termui.py", line 154, in prompt_func
+    raise Abort() from None
+click.exceptions.Abort
+
+[0m15:07:57.762180 [debug] [MainThread]: Resource report: {"command_name": "init", "command_success": false, "command_wall_clock_time": 2974.3591, "process_in_blocks": "0", "process_kernel_time": 0.170966, "process_mem_max_rss": "112295936", "process_out_blocks": "0", "process_user_time": 0.831504}
+[0m15:07:57.762800 [debug] [MainThread]: Command `dbt init` failed at 15:07:57.762699 after 2974.36 seconds
+[0m15:07:57.763466 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1102b8b50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1121dae00>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1121d6410>]}
+[0m15:07:57.764222 [debug] [MainThread]: Flushing usage events
+[0m15:07:58.219923 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m15:08:02.870071 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1069bcb50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1084dc4c0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1084dc5b0>]}
+
+
+============================== 15:08:02.873204 | 58f6e17d-5430-4668-a4cf-44d0a692e376 ==============================
+[0m15:08:02.873204 [info ] [MainThread]: Running with dbt=1.11.7
+[0m15:08:02.873615 [debug] [MainThread]: running dbt with arguments {'static_parser': 'True', 'debug': 'False', 'cache_selected_only': 'False', 'partial_parse': 'True', 'target_path': 'None', 'empty': 'None', 'write_json': 'True', 'version_check': 'True', 'log_cache_events': 'False', 'use_colors': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'introspect': 'True', 'log_path': 'logs', 'indirect_selection': 'eager', 'invocation_command': 'dbt init uk_retail_dbt', 'printer_width': '80', 'no_print': 'None', 'fail_fast': 'False', 'quiet': 'False', 'use_experimental_parser': 'False', 'profiles_dir': '/Users/paul/.dbt', 'send_anonymous_usage_stats': 'True', 'log_format': 'default', 'warn_error': 'None'}
+[0m15:08:02.883122 [info ] [MainThread]: A project called uk_retail_dbt already exists here.
+[0m15:08:02.884800 [debug] [MainThread]: Resource report: {"command_name": "init", "command_success": true, "command_wall_clock_time": 0.063777335, "process_in_blocks": "0", "process_kernel_time": 0.160358, "process_mem_max_rss": "112541696", "process_out_blocks": "0", "process_user_time": 0.872706}
+[0m15:08:02.885380 [debug] [MainThread]: Command `dbt init` succeeded at 15:08:02.885269 after 0.06 seconds
+[0m15:08:02.885730 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1069bcb50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x108453d60>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1084df640>]}
+[0m15:08:02.886012 [debug] [MainThread]: Flushing usage events
+[0m15:08:03.339051 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m15:12:52.205796 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x108290b50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109edc4c0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109edc5b0>]}
+
+
+============================== 15:12:52.209223 | 7c84fdc9-44ef-460c-be24-c5ce85aa7e05 ==============================
+[0m15:12:52.209223 [info ] [MainThread]: Running with dbt=1.11.7
+[0m15:12:52.209634 [debug] [MainThread]: running dbt with arguments {'introspect': 'True', 'log_format': 'default', 'partial_parse': 'True', 'indirect_selection': 'eager', 'target_path': 'None', 'empty': 'None', 'static_parser': 'True', 'write_json': 'True', 'debug': 'False', 'send_anonymous_usage_stats': 'True', 'printer_width': '80', 'log_path': 'logs', 'invocation_command': 'dbt init uk_retail_dbt', 'log_cache_events': 'False', 'profiles_dir': '/Users/paul/.dbt', 'quiet': 'False', 'warn_error': 'None', 'no_print': 'None', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'cache_selected_only': 'False', 'use_experimental_parser': 'False', 'fail_fast': 'False', 'use_colors': 'True', 'version_check': 'True'}
+[0m15:12:52.219911 [info ] [MainThread]: A project called uk_retail_dbt already exists here.
+[0m15:12:52.222494 [debug] [MainThread]: Resource report: {"command_name": "init", "command_success": true, "command_wall_clock_time": 0.06656783, "process_in_blocks": "0", "process_kernel_time": 0.162972, "process_mem_max_rss": "112885760", "process_out_blocks": "0", "process_user_time": 0.819007}
+[0m15:12:52.222879 [debug] [MainThread]: Command `dbt init` succeeded at 15:12:52.222808 after 0.07 seconds
+[0m15:12:52.223139 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x108290b50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109e67d60>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109edf640>]}
+[0m15:12:52.223390 [debug] [MainThread]: Flushing usage events
+[0m15:12:52.615784 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m15:13:27.804436 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x108838af0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10991c6a0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10991c790>]}
+
+
+============================== 15:13:27.807661 | 97f67f11-7f61-41de-81d3-fda62317c96c ==============================
+[0m15:13:27.807661 [info ] [MainThread]: Running with dbt=1.11.7
+[0m15:13:27.808096 [debug] [MainThread]: running dbt with arguments {'log_format': 'default', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'debug': 'False', 'log_cache_events': 'False', 'introspect': 'True', 'use_experimental_parser': 'False', 'quiet': 'False', 'indirect_selection': 'eager', 'profiles_dir': '/Users/paul/.dbt', 'printer_width': '80', 'write_json': 'True', 'log_path': 'logs', 'target_path': 'None', 'no_print': 'None', 'send_anonymous_usage_stats': 'True', 'version_check': 'True', 'invocation_command': 'dbt init uk_retail_dbt', 'fail_fast': 'False', 'static_parser': 'True', 'warn_error': 'None', 'cache_selected_only': 'False', 'use_colors': 'True', 'partial_parse': 'True', 'empty': 'None'}
+[0m15:13:27.816887 [debug] [MainThread]: Starter project path: /opt/homebrew/Caskroom/miniforge/base/envs/hmm_ml_env/lib/python3.10/site-packages/dbt/include/starter_project
+[0m15:13:27.821982 [info ] [MainThread]: 
+Your new dbt project "uk_retail_dbt" was created!
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m15:13:27.822422 [info ] [MainThread]: Setting up your profile.
+[0m15:14:07.320879 [error] [MainThread]: Encountered an error:
+
+[0m15:14:07.327374 [error] [MainThread]: Traceback (most recent call last):
+  File "/opt/homebrew/Caskroom/miniforge/base/envs/hmm_ml_env/lib/python3.10/site-packages/dbt/cli/requires.py", line 182, in wrapper
+    result, success = func(*args, **kwargs)
+  File "/opt/homebrew/Caskroom/miniforge/base/envs/hmm_ml_env/lib/python3.10/site-packages/dbt/cli/requires.py", line 128, in wrapper
+    return func(*args, **kwargs)
+  File "/opt/homebrew/Caskroom/miniforge/base/envs/hmm_ml_env/lib/python3.10/site-packages/dbt/cli/main.py", line 483, in init
+    results = task.run()
+  File "/opt/homebrew/Caskroom/miniforge/base/envs/hmm_ml_env/lib/python3.10/site-packages/dbt/task/init.py", line 346, in run
+    self.setup_profile(profile_name)
+  File "/opt/homebrew/Caskroom/miniforge/base/envs/hmm_ml_env/lib/python3.10/site-packages/dbt/task/init.py", line 261, in setup_profile
+    adapter = self.ask_for_adapter_choice()
+  File "/opt/homebrew/Caskroom/miniforge/base/envs/hmm_ml_env/lib/python3.10/site-packages/dbt/task/init.py", line 242, in ask_for_adapter_choice
+    numeric_choice = click.prompt(prompt_msg, type=click.INT)
+  File "/opt/homebrew/Caskroom/miniforge/base/envs/hmm_ml_env/lib/python3.10/site-packages/click/termui.py", line 171, in prompt
+    value = prompt_func(prompt)
+  File "/opt/homebrew/Caskroom/miniforge/base/envs/hmm_ml_env/lib/python3.10/site-packages/click/termui.py", line 154, in prompt_func
+    raise Abort() from None
+click.exceptions.Abort
+
+[0m15:14:07.333362 [debug] [MainThread]: Resource report: {"command_name": "init", "command_success": false, "command_wall_clock_time": 39.573895, "process_in_blocks": "0", "process_kernel_time": 0.150176, "process_mem_max_rss": "111771648", "process_out_blocks": "0", "process_user_time": 0.824427}
+[0m15:14:07.334364 [debug] [MainThread]: Command `dbt init` failed at 15:14:07.334226 after 39.58 seconds
+[0m15:14:07.335028 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x108838af0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10991f430>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1099164a0>]}
+[0m15:14:07.335566 [debug] [MainThread]: Flushing usage events
+[0m15:14:07.806126 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m15:14:55.672236 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x108334b50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109fe4520>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109fe4610>]}
+
+
+============================== 15:14:55.675513 | 9c0bcb1f-6e0e-4e6f-874a-67ae59ade7d8 ==============================
+[0m15:14:55.675513 [info ] [MainThread]: Running with dbt=1.11.7
+[0m15:14:55.675952 [debug] [MainThread]: running dbt with arguments {'static_parser': 'True', 'cache_selected_only': 'False', 'use_experimental_parser': 'False', 'partial_parse': 'True', 'quiet': 'False', 'version_check': 'True', 'use_colors': 'True', 'fail_fast': 'False', 'log_path': 'logs', 'write_json': 'True', 'target_path': 'None', 'profiles_dir': '/Users/paul/.dbt', 'printer_width': '80', 'empty': 'None', 'invocation_command': 'dbt init uk_retail_dbt', 'log_cache_events': 'False', 'indirect_selection': 'eager', 'no_print': 'None', 'send_anonymous_usage_stats': 'True', 'debug': 'False', 'introspect': 'True', 'warn_error': 'None', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'log_format': 'default'}
+[0m15:14:55.685277 [debug] [MainThread]: Starter project path: /opt/homebrew/Caskroom/miniforge/base/envs/hmm_ml_env/lib/python3.10/site-packages/dbt/include/starter_project
+[0m15:14:55.690142 [info ] [MainThread]: 
+Your new dbt project "uk_retail_dbt" was created!
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m15:14:55.690657 [info ] [MainThread]: Setting up your profile.
+[0m15:16:29.830836 [info ] [MainThread]: Profile uk_retail_dbt written to /Users/paul/.dbt/profiles.yml using target's profile_template.yml and your supplied values. Run 'dbt debug' to validate the connection.
+[0m15:16:29.840363 [debug] [MainThread]: Resource report: {"command_name": "init", "command_success": true, "command_wall_clock_time": 94.21425, "process_in_blocks": "0", "process_kernel_time": 0.300937, "process_mem_max_rss": "197738496", "process_out_blocks": "0", "process_user_time": 1.324915}
+[0m15:16:29.841718 [debug] [MainThread]: Command `dbt init` succeeded at 15:16:29.841555 after 94.22 seconds
+[0m15:16:29.842380 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x108334b50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109fe6ef0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109fe7640>]}
+[0m15:16:29.843027 [debug] [MainThread]: Flushing usage events
+[0m15:16:30.279913 [debug] [MainThread]: An error was encountered while trying to flush usage events
