@@ -84,12 +84,12 @@ if not IS_CLOUD:
         mlflow.log_metrics({"rmse": rmse, "mape": mape})
         mlflow.xgboost.log_model(model, "model")
         mlflow.log_artifact("prediction_results.png")
-    print("✅ MLflow 本地紀錄完成。")
+    print("MLflow 本地紀錄完成。")
 else:
     # 雲端模式：整合 Vertex AI 完整生命週期 [cite: 15, 21]
-    print("🚀 啟動 Vertex AI 實驗追蹤與自動化註冊...")
+    print("啟動 Vertex AI 實驗追蹤與自動化註冊...")
     aiplatform.init(project=PROJECT_ID, location=REGION, experiment=EXPERIMENT_NAME)
-    
+
     with aiplatform.start_run(run=run_id):
         aiplatform.log_metrics({"rmse": rmse, "mape": mape})
         aiplatform.log_params({"n_estimators": 100, "max_depth": 6})
@@ -107,10 +107,12 @@ else:
         plot_blob.upload_from_filename("prediction_results.png")
 
         # 自動註冊模型，準備進行 Online Serving 
-        print("📦 註冊模型至 Model Registry...")
+        print("註冊模型至 Model Registry...")
         registered_model = aiplatform.Model.upload(
             display_name=f"uk-retail-price-predictor{run_id}",
             artifact_uri=f"gs://{BUCKET_NAME}/model-artifacts/{run_id}/",
             serving_container_image_uri="europe-docker.pkg.dev/vertex-ai/prediction/xgboost-cpu.1-6:latest"
         )
-        print(f"🚀 模型註冊成功！版本: {registered_model.version_id}")
+        print(f"模型註冊成功！版本: {registered_model.version_id}")
+
+        from google.cloud import aiplatform
